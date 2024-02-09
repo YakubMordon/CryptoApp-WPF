@@ -1,4 +1,6 @@
 ﻿using CryptoApp.Models;
+using CryptoApp.Views;
+using CryptoApp.Views.UserControls;
 using GalaSoft.MvvmLight.CommandWpf;
 using System.ComponentModel;
 using System.Windows;
@@ -11,30 +13,33 @@ namespace CryptoApp.ViewModels
     {
         public HeaderViewModel()
         {
-            header = new Header();
+            header = new HeaderModel();
 
-            NavigateHomeCommand = new RelayCommand(NavigateHome);
-            NavigateToCryptoListCommand = new RelayCommand(NavigateToCryptoList);
-            SearchButtonClickCommand = new RelayCommand(SearchButton_Click);
-
-            //CurrentPage = new HomeView();
+            CurrentPage = new HomeView(ChangeCurrentCurrency, SearchText);
         }
 
-        private Header header;
+        private HeaderModel header;
 
         // Commands for navigation
-        public ICommand NavigateHomeCommand { get; }
-        public ICommand NavigateToCryptoListCommand { get; }
-        public ICommand SearchButtonClickCommand { get; }
-        
+        public ICommand NavigateHomeCommand => new RelayCommand(NavigateHome);
+        public ICommand NavigateToCryptoListCommand => new RelayCommand(NavigateToCurrencyInfo);
 
-        public Page CurrentPage
+        public UserControl CurrentPage
         {
             get { return header.CurrentPage; }
             set
             {
                 header.CurrentPage = value;
                 OnPropertyChanged(nameof(CurrentPage));
+            }
+        }
+
+        public CurrencyModel? CurrentCurrencyModel
+        {
+            get { return header.CurrentCurrencyModel; }
+            set
+            {
+                header.CurrentCurrencyModel = value;
             }
         }
 
@@ -59,31 +64,30 @@ namespace CryptoApp.ViewModels
             }
         }
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
         public void TextBox_TextChanged()
         {
             PlaceholderVisibility = string.IsNullOrWhiteSpace(SearchText) ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        public void SearchButton_Click()
-        {
-
-        }
-
         public void NavigateHome()
         {
-
+            CurrentPage = new HomeView(ChangeCurrentCurrency, SearchText);
         }
 
-        public void NavigateToCryptoList()
+        public void ChangeCurrentCurrency(CurrencyModel model)
         {
+            CurrentCurrencyModel = model;
+        }
 
+        public void NavigateToCurrencyInfo()
+        {
+            CurrentPage = new CurrencyView(CurrentCurrencyModel);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

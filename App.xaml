@@ -7,7 +7,9 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Haley.WPF;component/Dictionaries/haleyRD.xaml" />
+                <ResourceDictionary Source="Styles/HomeStyles.xaml"/>
                 <ResourceDictionary Source="Styles/HeaderStyles.xaml"/>
+                <ResourceDictionary Source="Styles/CurrencyStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

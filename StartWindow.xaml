@@ -47,7 +47,7 @@
                         Style="{StaticResource SearchTextBoxStyle}" 
                         SelectionBrush="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Cursor=""/>
 
-                    <Button x:Name="SearchButton" Command="{Binding SearchButtonClickCommand}"
+                    <Button x:Name="SearchButton" Command="{Binding NavigateHomeCommand}"
                         Style="{StaticResource SearchButtonStyle}"/>
                 </Grid>
             </Border>

@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Currency Name Style -->
+    <Style x:Key="CurrencyNameStyle" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="FontSize" Value="20"/>
+    </Style>
+
+    <!-- Currency Information Style -->
+    <Style x:Key="CurrencyInfoStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="0,5,0,0"/>
+        <Setter Property="FontSize" Value="16"/>
+    </Style>
+
+    <!-- Market Header Style -->
+    <Style x:Key="MarketHeaderStyle" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Margin" Value="0,20,0,10"/>
+        <Setter Property="FontSize" Value="18"/>
+    </Style>
+
+    <!-- Market Exchange ID Style -->
+    <Style x:Key="MarketExchangeIdStyle" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Bold"/>
+    </Style>
+
+    <!-- Market Pair Style -->
+    <Style x:Key="MarketPairStyle" TargetType="TextBlock">
+        <Setter Property="FontStyle" Value="Italic"/>
+    </Style>
+
+    <!-- Market Price Style -->
+    <Style x:Key="MarketPriceStyle" TargetType="TextBlock">
+        <Setter Property="Margin" Value="0,5,0,0"/>
+    </Style>
+</ResourceDictionary>
