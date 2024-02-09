@@ -1,0 +1,58 @@
+﻿<Window x:Class="CryptoApp.StartWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CryptoApp"
+        mc:Ignorable="d"
+        Width="1000" MinWidth="1000" MaxWidth="1000" 
+        Height="600" MinHeight="600" MaxHeight="600"
+        Title="Crypto Currency App" ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="70"/>
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <!-- Header section -->
+        <Grid Grid.Row="0" Height="70" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.19*"/>
+                <ColumnDefinition Width="0.2*"/>
+                <ColumnDefinition Width="0.28*"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <!-- Logo or Application Name -->
+            <TextBlock Grid.Column="0" Text="CryptoApp" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+            <!-- Navigation buttons -->
+            <Button Grid.Column="1" Content="Home" Margin="20,0,10,0"
+                Command="{Binding NavigateHomeCommand}" Style="{StaticResource NavButtonStyle}" />
+            <Button Grid.Column="2" Content="Cryptocurrency List"
+                Command="{Binding NavigateToCryptoListCommand}" Style="{StaticResource NavButtonStyle}" />
+
+            <!-- Search bar placeholder -->
+            <TextBlock Grid.Column="3" x:Name="SearchPlaceholder" Text="Search here.." 
+                Style="{StaticResource SearchPlaceholder}" Visibility="{Binding PlaceholderVisibility}"/>
+
+            <!-- Search bar -->
+            <Border Grid.Column="3" x:Name="Border" Style="{StaticResource SearchBarBorder}" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox x:Name="SearchBarInput" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" 
+                        Style="{StaticResource SearchTextBoxStyle}" 
+                        SelectionBrush="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" Cursor=""/>
+
+                    <Button x:Name="SearchButton" Command="{Binding SearchButtonClickCommand}"
+                        Style="{StaticResource SearchButtonStyle}"/>
+                </Grid>
+            </Border>
+
+        </Grid>
+
+        <ContentControl Grid.Row="1" Content="{Binding CurrentPage}" Margin="10"/>
+    </Grid>
+</Window>
