@@ -17,7 +17,7 @@ namespace CryptoApp.Services
             _httpClient.BaseAddress = new Uri("https://api.coincap.io/v2/");
         }
 
-        public async Task<List<CurrencyModel>> GetCurrencyModels(int number = 10)
+        public async Task<List<CurrencyModel>> GetCurrencyModels(string? searchText, int number = 10)
         {
             var response = await _httpClient.GetAsync($"assets");
 
@@ -33,10 +33,17 @@ namespace CryptoApp.Services
 
             var sortedList = serializedCurrencyData.Data
                                 .OrderByDescending(currency => currency.Rank)
-                                .Take(number); 
+                                .Take(number);
+
+            if (!string.IsNullOrWhiteSpace(searchText)) 
+            {
+                string lowercaseText = searchText.ToLower();
+                sortedList = sortedList.Where(item => item.Name.ToLower() == lowercaseText || item.Symbol.ToLower() == lowercaseText); 
+            }
 
             foreach (var item in serializedCurrencyData.Data)
             {
+                
                 result.Add(new CurrencyModel
                 {
                     Id = item.Id,

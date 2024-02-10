@@ -1,8 +1,12 @@
-﻿using CryptoApp.Models;
+﻿using CryptoApp.Interfaces.Services;
+using CryptoApp.Models;
+using CryptoApp.Services;
 using GalaSoft.MvvmLight.CommandWpf;
+using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CryptoApp.ViewModels
 {
@@ -23,6 +27,8 @@ namespace CryptoApp.ViewModels
             Initialize();
         }
 
+        public ICommand ListItemClickCommand => new RelayCommand<object>(ExecuteListItemClick);
+
         public string InputText
         {
             get => _model.InputText;
@@ -37,7 +43,7 @@ namespace CryptoApp.ViewModels
             }
         }
 
-        public ObservableCollection<string> Elements => _model.Elements;
+        public ObservableCollection<CurrencyModel> Elements => _model.Elements;
 
         public ObservableCollection<string> CryptocurrencyOptions => _model.CryptocurrencyOptions;
 
@@ -96,9 +102,30 @@ namespace CryptoApp.ViewModels
             }
         }
 
-        private void Search()
+        private void ExecuteListItemClick(object parameter)
         {
-            // Implement search functionality here
+            if (parameter is CurrencyModel clickedItem)
+            {
+                _changePage(clickedItem);
+            }
+        }
+
+        private async Task Search()
+        {
+            ICoinCapService coinCapService = new CoinCapService();
+
+            List<CurrencyModel> currencyModels;
+
+            if(int.TryParse(InputText, out int number) && number is < 2001 and > -1)
+            {
+                currencyModels = await coinCapService.GetCurrencyModels(_searchText, number);
+            }
+            else
+            {
+                currencyModels = await coinCapService.GetCurrencyModels(_searchText);
+            }
+
+            _model.Elements = new ObservableCollection<CurrencyModel>(currencyModels);
         }
 
         private void Convert()
@@ -106,10 +133,13 @@ namespace CryptoApp.ViewModels
             // Implement convert functionality here
         }
 
-        private void Initialize()
+        private async Task Initialize()
         {
+            ICoinCapService coinCapService = new CoinCapService();
 
-            _model.Elements = new ObservableCollection<string>();
+            var currencyModels = await coinCapService.GetCurrencyModels(_searchText);
+
+            _model.Elements = new ObservableCollection<CurrencyModel>(currencyModels);
 
             _model.CryptocurrencyOptions = new ObservableCollection<string>();
         }
