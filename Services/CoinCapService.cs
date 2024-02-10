@@ -32,7 +32,7 @@ namespace CryptoApp.Services
             var result = new List<CurrencyModel>();
 
             var sortedList = serializedCurrencyData.Data
-                                .OrderByDescending(currency => currency.Rank)
+                                .OrderBy(currency => currency.Rank)
                                 .Take(number);
 
             if (!string.IsNullOrWhiteSpace(searchText)) 
