@@ -8,5 +8,6 @@
         public decimal Volume { get; set; }
         public decimal PriceChange { get; set; }
         public List<MarketModel> Markets { get; set; }
+        public List<CandlestickModel> Candles { get; set; }
     }
 }
