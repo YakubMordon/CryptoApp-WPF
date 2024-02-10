@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.CommandWpf;
 using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -43,9 +44,47 @@ namespace CryptoApp.ViewModels
             }
         }
 
-        public ObservableCollection<CurrencyModel> Elements => _model.Elements;
+        private ObservableCollection<string> elements;
 
-        public ObservableCollection<string> CryptocurrencyOptions => _model.CryptocurrencyOptions;
+        public ObservableCollection<string> Elements
+        {
+            get => elements;
+            set 
+            {
+                if (elements != value)
+                {
+                    elements = value;
+                    OnPropertyChanged(nameof(Elements));
+                }
+            }
+        }
+
+        public ObservableCollection<CurrencyModel> CurrencyElements
+        {
+            get => _model.Elements;
+            set
+            {
+                if (_model.Elements != value)
+                {
+                    _model.Elements = value;
+                    OnPropertyChanged(nameof(CurrencyElements));
+                    UpdateElementList();
+                }
+            }
+        }
+
+        public ObservableCollection<string> CryptocurrencyOptions
+        {
+            get => _model.CryptocurrencyOptions;
+            set
+            {
+                if (_model.CryptocurrencyOptions != value)
+                {
+                    _model.CryptocurrencyOptions = value;
+                    OnPropertyChanged(nameof(CryptocurrencyOptions));
+                }
+            }
+        }
 
         public string SelectedCryptocurrencyFrom
         {
@@ -104,9 +143,13 @@ namespace CryptoApp.ViewModels
 
         private void ExecuteListItemClick(object parameter)
         {
-            if (parameter is CurrencyModel clickedItem)
+            if(parameter is string parameterString)
             {
-                _changePage(clickedItem);
+                var separatedString = parameterString.Split("\t");
+
+                var choosedModel = CurrencyElements.First(elem => elem.Id == separatedString[1]);
+
+                _changePage(choosedModel);
             }
         }
 
@@ -125,7 +168,7 @@ namespace CryptoApp.ViewModels
                 currencyModels = await coinCapService.GetCurrencyModels(_searchText);
             }
 
-            _model.Elements = new ObservableCollection<CurrencyModel>(currencyModels);
+            CurrencyElements = new ObservableCollection<CurrencyModel>(currencyModels);
         }
 
         private void Convert()
@@ -133,15 +176,45 @@ namespace CryptoApp.ViewModels
             // Implement convert functionality here
         }
 
-        private async Task Initialize()
+        private void Initialize()
         {
             ICoinCapService coinCapService = new CoinCapService();
 
-            var currencyModels = await coinCapService.GetCurrencyModels(_searchText);
+            Elements = new ObservableCollection<string>();
+            CryptocurrencyOptions = new ObservableCollection<string>();
 
-            _model.Elements = new ObservableCollection<CurrencyModel>(currencyModels);
+            var initializeTask = coinCapService.GetCurrencyModels(_searchText);
 
-            _model.CryptocurrencyOptions = new ObservableCollection<string>();
+            initializeTask.ContinueWith(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    // Handle the exception
+                    Exception exception = task.Exception?.InnerException ?? task.Exception;
+                    Console.WriteLine($"Initialization failed: {exception.Message}");
+                }
+                else
+                {
+                    var currencyModels = task.Result;
+                    CurrencyElements = new ObservableCollection<CurrencyModel>(currencyModels);
+                    UpdateElementList();
+                    MessageBox.Show(CurrencyElements.ToString());
+                }
+            });
+
+            initializeTask.Wait(); 
+            initializeTask.Dispose();
+        }
+
+        private void UpdateElementList()
+        {
+            Elements.Clear();
+            foreach (var item in CurrencyElements)
+            {
+                string serializedString = $"{item.Name}\t{item.Id}\t{item.Volume}\t{item.Price}\t{item.PriceChange}";
+
+                Elements.Add(serializedString);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

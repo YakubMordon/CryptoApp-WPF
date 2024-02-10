@@ -19,7 +19,18 @@ namespace CryptoApp.Services
 
         public async Task<List<CurrencyModel>> GetCurrencyModels(string? searchText, int number = 10)
         {
-            var response = await _httpClient.GetAsync($"assets");
+            string requestUrl;
+
+            if (!string.IsNullOrWhiteSpace(searchText))
+            {
+                requestUrl = $"assets?limit={number}&search={searchText}";
+            }
+            else
+            {
+                requestUrl = $"assets?limit={number}";
+            }
+
+            var response = await _httpClient.GetAsync(requestUrl);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -35,12 +46,6 @@ namespace CryptoApp.Services
                                 .OrderBy(currency => currency.Rank)
                                 .Take(number);
 
-            if (!string.IsNullOrWhiteSpace(searchText)) 
-            {
-                string lowercaseText = searchText.ToLower();
-                sortedList = sortedList.Where(item => item.Name.ToLower() == lowercaseText || item.Symbol.ToLower() == lowercaseText); 
-            }
-
             foreach (var item in serializedCurrencyData.Data)
             {
                 
@@ -48,16 +53,16 @@ namespace CryptoApp.Services
                 {
                     Id = item.Id,
                     Name = item.Name,
-                    Price = Decimal.Parse(item.PriceUsd),
-                    PriceChange = Decimal.Parse(item.ChangePercent24Hr),
-                    Volume = Decimal.Parse(item.VolumeUsd24Hr),
+                    Price = item.PriceUsd,
+                    PriceChange = item.ChangePercent24Hr,
+                    Volume = item.VolumeUsd24Hr,
                     Markets = await GetCurrencyMarkets(item.Id)
                 });
             }
 
             return result;
         }
-
+        //Api: 963cc744-6a6c-419f-8a91-abbd34f3363a
         private async Task<List<MarketModel>> GetCurrencyMarkets(string currencyId)
         {
             var marketResponse = await _httpClient.GetAsync($"assets/{currencyId}/markets");
@@ -68,11 +73,11 @@ namespace CryptoApp.Services
             }
 
             var marketContent = await marketResponse.Content.ReadAsStringAsync();
-            var serializedMarketData = JsonConvert.DeserializeObject<List<MarketDataResponse>>(marketContent);
+            var serializedMarketData = JsonConvert.DeserializeObject<MarketResponse>(marketContent);
 
             var markets = new List<MarketModel>();
 
-            foreach (var item in serializedMarketData)
+            foreach (var item in serializedMarketData.Data)
             {
                 markets.Add(new MarketModel
                 {
@@ -101,11 +106,11 @@ namespace CryptoApp.Services
             }
 
             var candleContent = await candleResponse.Content.ReadAsStringAsync();
-            var serializedCandleData = JsonConvert.DeserializeObject<List<CandlestickDataResponse>>(candleContent);
+            var serializedCandleData = JsonConvert.DeserializeObject<CandlestickResponse>(candleContent);
 
             var candles = new List<CandlestickModel>();
 
-            foreach (var item in serializedCandleData)
+            foreach (var item in serializedCandleData.Data)
             {
                 candles.Add(new CandlestickModel
                 {
