@@ -77,11 +77,21 @@ namespace CryptoApp.ViewModels
         public void ChangeCurrentCurrency(CurrencyModel model)
         {
             CurrentCurrencyModel = model;
+            NavigateToCurrencyInfo();
         }
 
         public void NavigateToCurrencyInfo()
         {
-            CurrentPage = new CurrencyView(CurrentCurrencyModel);
+            if(CurrentCurrencyModel is not null)
+            {
+                CurrentPage = new CurrencyView(CurrentCurrencyModel);
+            }
+            else
+            {
+                MessageBox.Show("This function will be available only after you will enter any Currency Information page", "Error box", MessageBoxButton.OK);
+            }
+
+            
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
