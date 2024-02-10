@@ -37,22 +37,6 @@ namespace CryptoApp.ViewModels
             }
         }
 
-        public string SelectedOption
-        {
-            get => _model.SelectedOption;
-            set
-            {
-                if (_model.SelectedOption != value)
-                {
-                    _model.SelectedOption = value;
-                    OnPropertyChanged(nameof(SelectedOption));
-                    Search();
-                }
-            }
-        }
-
-        public ObservableCollection<string> SelectOptions => _model.SelectOptions;
-
         public ObservableCollection<string> Elements => _model.Elements;
 
         public ObservableCollection<string> CryptocurrencyOptions => _model.CryptocurrencyOptions;
@@ -124,7 +108,6 @@ namespace CryptoApp.ViewModels
 
         private void Initialize()
         {
-            _model.SelectOptions = new ObservableCollection<string>();
 
             _model.Elements = new ObservableCollection<string>();
 

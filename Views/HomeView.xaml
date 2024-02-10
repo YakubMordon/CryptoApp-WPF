@@ -16,21 +16,14 @@
 
         <!-- Input section -->
         <Grid Grid.Row="0" Grid.ColumnSpan="2" Margin="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
 
             <StackPanel Margin="0,10,10,0">
-                <TextBlock Text="Enter your number of currencies. Default value is 10" Style="{StaticResource PlaceholderTextStyle}"/>
-                <TextBox Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputTextBoxStyle}" Margin="0,5,0,0"/>
+                <TextBlock Text="Enter your number of currencies. Default value is 10" Style="{StaticResource PlaceholderTextStyle}"
+                           HorizontalAlignment="Center"/>
+                <TextBox Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}" Style="{StaticResource InputTextBoxStyle}" 
+                         Margin="0,5,0,0"/>
             </StackPanel>
 
-            <StackPanel Grid.Column="1" Margin="10,10,0,0">
-                <TextBlock Text="Choose Currency. Default value is 'BitCoin'" Style="{StaticResource PlaceholderTextStyle}"/>
-                <!-- Select bar -->
-                <ComboBox ItemsSource="{Binding SelectOptions}" SelectedItem="{Binding SelectedOption}" Style="{StaticResource ComboBoxStyle}" Margin="0,5,0,0"/>
-            </StackPanel>
         </Grid>
 
         <!-- List of elements -->

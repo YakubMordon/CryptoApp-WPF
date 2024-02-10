@@ -4,6 +4,6 @@ namespace CryptoApp.Interfaces.Services
 {
     interface ICoinCapService
     {
-        Task<CurrencyModel> GetCurrencyData(string currencyId);
+        Task<List<CurrencyModel>> GetCurrencyModels(int number = 10);
     }
 }

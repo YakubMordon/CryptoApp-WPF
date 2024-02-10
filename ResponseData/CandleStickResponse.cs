@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CryptoApp.ResponseData
+﻿namespace CryptoApp.ResponseData
 {
     public class CandlestickResponse
+    {
+        public List<CandlestickDataResponse> Data { get; set; }
+    }
+
+    public class CandlestickDataResponse
     {
         public double Open { get; set; }
         public double High { get; set; }

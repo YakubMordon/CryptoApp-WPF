@@ -8,6 +8,11 @@ namespace CryptoApp.ResponseData
 {
     public class MarketResponse
     {
+        public List<MarketDataResponse> Data { get; set; }
+    }
+
+    public class MarketDataResponse
+    {
         public string ExchangeId { get; set; }
         public string BaseId { get; set; }
         public string QuoteId { get; set; }
