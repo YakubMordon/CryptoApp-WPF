@@ -3,20 +3,34 @@ using CryptoApp.Models;
 using CryptoApp.ResponseData;
 using Newtonsoft.Json;
 using System.Net.Http;
-using System.Windows.Controls;
 
 namespace CryptoApp.Services
 {
+    /// <summary>
+    /// Implementation for retrieving currency and candlestick data from CoinCap API.
+    /// </summary>
     public class CoinCapService : ICoinCapService
     {
+        /// <summary>
+        /// HttpClient for making requests and working with responses
+        /// </summary>
         private readonly HttpClient _httpClient;
 
+        /// <summary>
+        /// Constructor of <see cref="CoinCapService"/>
+        /// </summary>
         public CoinCapService()
         {
             _httpClient = new HttpClient();
             _httpClient.BaseAddress = new Uri("https://api.coincap.io/v2/");
         }
 
+        /// <summary>
+        /// Implementation of method for retrieving a list of <see cref="CurrencyModel"/> with their <see cref="MarketModel"/> based on the provided search text and optional number limit.
+        /// </summary>
+        /// <param name="searchText">The text to search for in currency names.</param>
+        /// <param name="number">The maximum number of <see cref="CurrencyModel"/> to retrieve. Defaults to 10 if not specified.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the list of <see cref="CurrencyModel"/>.</returns>
         public async Task<List<CurrencyModel>> GetCurrencyModels(string? searchText, int number = 10)
         {
             string requestUrl = $"assets?limit={number}";
@@ -54,7 +68,12 @@ namespace CryptoApp.Services
 
             return result;
         }
-        //Api: 963cc744-6a6c-419f-8a91-abbd34f3363a
+
+        /// <summary>
+        /// Implementation of method for retrieving a list of <see cref="MarketModel"/> based on the provided currency Id.
+        /// </summary>
+        /// <param name="currencyId">The currency Id for filtering markets</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the list of <see cref="MarketModel"/>.</returns>
         private async Task<List<MarketModel>> GetCurrencyMarkets(string currencyId)
         {
             var marketResponse = await _httpClient.GetAsync($"assets/{currencyId}/markets");
@@ -81,6 +100,13 @@ namespace CryptoApp.Services
             return markets;
         }
 
+        /// <summary>
+        /// Implementation of method for retrieving a list of <see cref="CandlestickModel"/> for a specific currency, exchange, and quote.
+        /// </summary>
+        /// <param name="currencyId">The unique identifier of the currency.</param>
+        /// <param name="exchangeId">The unique identifier of the exchange.</param>
+        /// <param name="quoteId">The unique identifier of the quote.</param>
+        /// <returns>A task representing the asynchronous operation. The task result contains the list of <see cref="CandlestickModel"/>.</returns>
         public async Task<List<CandlestickModel>> GetCandles(string currencyId, string exchangeId, string quoteId)
         {
             long currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();

@@ -5,10 +5,14 @@ using CryptoApp.ViewModels;
 namespace CryptoApp.Views
 {
     /// <summary>
-    /// Логика взаимодействия для CryptoInfo.xaml
+    /// Interaction logic for CryptoInfo.xaml
     /// </summary>
     public partial class CurrencyView : UserControl
     {
+        /// <summary>
+        /// Constructor of <see cref="CurrencyView"/>
+        /// </summary>
+        /// <param name="model">Currency Model</param>
         public CurrencyView(CurrencyModel model)
         {
             InitializeComponent();
