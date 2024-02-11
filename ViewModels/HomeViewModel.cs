@@ -95,7 +95,7 @@ namespace CryptoApp.ViewModels
                 {
                     _model.SelectedCryptocurrencyFrom = value;
                     OnPropertyChanged(nameof(SelectedCryptocurrencyFrom));
-                    Search();
+                    Convert();
                 }
             }
         }
@@ -109,7 +109,7 @@ namespace CryptoApp.ViewModels
                 {
                     _model.SelectedCryptocurrencyTo = value;
                     OnPropertyChanged(nameof(SelectedCryptocurrencyTo));
-                    Search();
+                    Convert();
                 }
             }
         }
@@ -138,18 +138,6 @@ namespace CryptoApp.ViewModels
                     _model.CryptocurrencyOutputText = value;
                     OnPropertyChanged(nameof(CryptocurrencyOutputText));
                 }
-            }
-        }
-
-        private void ExecuteListItemClick(object parameter)
-        {
-            if(parameter is string parameterString)
-            {
-                var separatedString = parameterString.Split("\t");
-
-                var choosedModel = CurrencyElements.First(elem => elem.Id == separatedString[1]);
-
-                _changePage(choosedModel);
             }
         }
 
@@ -197,24 +185,30 @@ namespace CryptoApp.ViewModels
                 {
                     var currencyModels = task.Result;
                     CurrencyElements = new ObservableCollection<CurrencyModel>(currencyModels);
-                    UpdateElementList();
-                    MessageBox.Show(CurrencyElements.ToString());
                 }
             });
 
-            initializeTask.Wait(); 
-            initializeTask.Dispose();
+        }
+
+        private void ExecuteListItemClick(object parameter)
+        {
+            if (parameter is string parameterString)
+            {
+                var separatedString = parameterString.Split("\t");
+
+                var choosedModel = CurrencyElements.First(elem => elem.Id == separatedString[1].Trim());
+
+                _changePage(choosedModel);
+            }
         }
 
         private void UpdateElementList()
         {
-            Elements.Clear();
-            foreach (var item in CurrencyElements)
-            {
-                string serializedString = $"{item.Name}\t{item.Id}\t{item.Volume}\t{item.Price}\t{item.PriceChange}";
+            var stringList = CurrencyElements.Select(item =>
+                $"{item.Name.PadRight(20)}\t{item.Id.PadRight(32)}\t{item.Volume.ToString().PadRight(15)}\t{item.Price.ToString().PadRight(15)}\t{item.PriceChange.ToString().PadRight(15)}"
+            ).ToList();
 
-                Elements.Add(serializedString);
-            }
+            Elements = new ObservableCollection<string>(stringList);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

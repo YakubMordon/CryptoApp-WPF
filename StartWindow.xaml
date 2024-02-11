@@ -28,7 +28,7 @@
             <!-- Navigation buttons -->
             <Button Grid.Column="1" Content="Home" Margin="20,0,10,0"
                 Command="{Binding NavigateHomeCommand}" Style="{StaticResource NavButtonStyle}" />
-            <Button Grid.Column="2" Content="Cryptocurrency List"
+            <Button Grid.Column="2" Content="Last Viewed Crypto"
                 Command="{Binding NavigateToCryptoListCommand}" Style="{StaticResource NavButtonStyle}" />
 
             <!-- Search bar placeholder -->

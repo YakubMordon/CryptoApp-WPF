@@ -19,15 +19,11 @@ namespace CryptoApp.Services
 
         public async Task<List<CurrencyModel>> GetCurrencyModels(string? searchText, int number = 10)
         {
-            string requestUrl;
+            string requestUrl = $"assets?limit={number}";
 
             if (!string.IsNullOrWhiteSpace(searchText))
             {
-                requestUrl = $"assets?limit={number}&search={searchText}";
-            }
-            else
-            {
-                requestUrl = $"assets?limit={number}";
+                requestUrl += $"&search={searchText}";
             }
 
             var response = await _httpClient.GetAsync(requestUrl);
@@ -41,10 +37,6 @@ namespace CryptoApp.Services
             var serializedCurrencyData = JsonConvert.DeserializeObject<CurrencyResponse>(content);
 
             var result = new List<CurrencyModel>();
-
-            var sortedList = serializedCurrencyData.Data
-                                .OrderBy(currency => currency.Rank)
-                                .Take(number);
 
             foreach (var item in serializedCurrencyData.Data)
             {
@@ -75,28 +67,26 @@ namespace CryptoApp.Services
             var marketContent = await marketResponse.Content.ReadAsStringAsync();
             var serializedMarketData = JsonConvert.DeserializeObject<MarketResponse>(marketContent);
 
-            var markets = new List<MarketModel>();
-
-            foreach (var item in serializedMarketData.Data)
+            var markets = serializedMarketData.Data.Select(item => new MarketModel
             {
-                markets.Add(new MarketModel
-                {
-                    ExchangeId = item.ExchangeId,
-                    QuoteId = item.QuoteId,
-                    Price = item.PriceUsd,
-                    Candles = await GetCandles(currencyId, item.ExchangeId)
-                });
-            }
+                ExchangeId = item.ExchangeId,
+                BaseId = item.BaseId,
+                QuoteId = item.QuoteId,
+                Price = item.PriceUsd
+            }).GroupBy(m => m.ExchangeId)
+                  .Select(g => g.First())
+                  .ToList();
+
 
             return markets;
         }
 
-        private async Task<List<CandlestickModel>> GetCandles(string currencyId, string exchangeId)
+        public async Task<List<CandlestickModel>> GetCandles(string currencyId, string exchangeId, string quoteId)
         {
             long currentTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             long yesterdayTimestamp = currentTimestamp - (24 * 60 * 60 * 1000);
 
-            string requestString = $"candles?exchange={exchangeId}&baseId={currencyId}&quoteId=USD&interval=h1&start={yesterdayTimestamp}&end={currentTimestamp}";
+            string requestString = $"candles?exchange={exchangeId}&baseId={currencyId}&quoteId={quoteId}&interval=h1&start={yesterdayTimestamp}&end={currentTimestamp}";
 
             var candleResponse = await _httpClient.GetAsync(requestString);
 
@@ -108,20 +98,15 @@ namespace CryptoApp.Services
             var candleContent = await candleResponse.Content.ReadAsStringAsync();
             var serializedCandleData = JsonConvert.DeserializeObject<CandlestickResponse>(candleContent);
 
-            var candles = new List<CandlestickModel>();
-
-            foreach (var item in serializedCandleData.Data)
+            var candles = serializedCandleData.Data.Select(item => new CandlestickModel
             {
-                candles.Add(new CandlestickModel
-                {
-                    Open = item.Open,
-                    High = item.High,
-                    Low = item.Low,
-                    Close = item.Close,
-                    Volume = item.Volume,
-                    Period = item.Period
-                });
-            }
+                Open = item.Open,
+                High = item.High,
+                Low = item.Low,
+                Close = item.Close,
+                Volume = item.Volume,
+                Period = item.Period
+            }).ToList();
 
             return candles;
         }

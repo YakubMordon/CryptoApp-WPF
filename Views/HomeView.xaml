@@ -27,14 +27,42 @@
 
         </Grid>
 
-        <!-- List of elements -->
-        <ListBox Grid.Row="1" Grid.ColumnSpan="2" ItemsSource="{Binding Elements}" Style="{StaticResource ListBoxStyle}" Margin="10">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseLeftButtonDown">
-                    <i:InvokeCommandAction Command="{Binding ListItemClickCommand}" CommandParameter="{Binding}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </ListBox>
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock HorizontalAlignment="Center" FontSize="14" Text="Name"/>
+                <TextBlock Grid.Column="1" HorizontalAlignment="Center" FontSize="14" Text="Id"/>
+                <TextBlock Grid.Column="2" HorizontalAlignment="Center" FontSize="14" Text="Volume"/>
+                <TextBlock Grid.Column="3" HorizontalAlignment="Center" FontSize="14" Text="Price"/>
+                <TextBlock Grid.Column="4" HorizontalAlignment="Center" Text="PriceChange"/>
+            </Grid>
+            <!-- List of elements -->
+            <ListBox Grid.Row="1" ItemsSource="{Binding Elements}" Style="{StaticResource ListBoxStyle}" Margin="10">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseLeftButtonDown">
+                                    <i:InvokeCommandAction Command="{Binding DataContext.ListItemClickCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}" 
+                                                           CommandParameter="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
 
 
         <!-- Cryptocurrency converter -->

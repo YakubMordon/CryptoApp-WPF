@@ -1,4 +1,6 @@
-﻿using CryptoApp.Models;
+﻿using CryptoApp.Interfaces.Services;
+using CryptoApp.Models;
+using CryptoApp.Services;
 using CryptoApp.Views;
 using CryptoApp.Views.UserControls;
 using GalaSoft.MvvmLight.CommandWpf;
@@ -76,6 +78,26 @@ namespace CryptoApp.ViewModels
 
         public void ChangeCurrentCurrency(CurrencyModel model)
         {
+            ICoinCapService coinCapService = new CoinCapService();
+
+            var firstMarket = model.Markets[0];
+
+            var initializeTask = coinCapService.GetCandles(firstMarket.BaseId, firstMarket.ExchangeId, firstMarket.QuoteId);
+
+            initializeTask.ContinueWith(task =>
+            {
+                if (task.IsFaulted)
+                {
+                    // Handle the exception
+                    Exception exception = task.Exception?.InnerException ?? task.Exception;
+                    Console.WriteLine($"Candles addition failed: {exception.Message}");
+                }
+                else
+                {
+                    model.Markets[0].Candles = task.Result;
+                }
+            });
+             
             CurrentCurrencyModel = model;
             NavigateToCurrencyInfo();
         }

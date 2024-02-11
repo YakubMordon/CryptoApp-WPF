@@ -14,7 +14,7 @@ namespace CryptoApp.ResponseData
     public class MarketDataResponse
     {
         public string ExchangeId { get; set; }
-        public string? BaseId { get; set; }
+        public string BaseId { get; set; }
         public string QuoteId { get; set; }
         public string? BaseSymbol { get; set; }
         public string? QuoteSymbol { get; set; }

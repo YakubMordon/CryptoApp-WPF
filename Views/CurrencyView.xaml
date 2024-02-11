@@ -14,18 +14,19 @@
             <TextBlock Text="{Binding Currency.Volume, StringFormat='Volume: {0:N}'}" Style="{StaticResource CurrencyInfoStyle}"/>
             <TextBlock Text="{Binding Currency.PriceChange, StringFormat='Price Change: {0:F2}%'}" Style="{StaticResource CurrencyInfoStyle}"/>
 
-            <!-- Display Markets -->
+                <!-- Display Markets -->
             <TextBlock Text="Markets (Price in USD):" FontWeight="Bold" Margin="0,20,0,10" Style="{StaticResource MarketHeaderStyle}"/>
-            <ItemsControl ItemsSource="{Binding Currency.Markets}">
-                <ItemsControl.ItemTemplate>
+            <ListBox ItemsSource="{Binding Currency.Markets}" Height="280" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
                             <TextBlock Text="{Binding ExchangeId}" Style="{StaticResource MarketExchangeIdStyle}"/>
                             <TextBlock Text="{Binding Price, StringFormat='Price: {0:C}'}" Style="{StaticResource MarketPriceStyle}"/>
                         </StackPanel>
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
         </StackPanel>
     </Grid>
 </UserControl>
