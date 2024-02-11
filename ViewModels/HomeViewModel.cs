@@ -187,7 +187,6 @@ namespace CryptoApp.ViewModels
                     CurrencyElements = new ObservableCollection<CurrencyModel>(currencyModels);
                 }
             });
-
         }
 
         private void ExecuteListItemClick(object parameter)

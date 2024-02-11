@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:CryptoApp.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -14,19 +13,32 @@
             <TextBlock Text="{Binding Currency.Volume, StringFormat='Volume: {0:N}'}" Style="{StaticResource CurrencyInfoStyle}"/>
             <TextBlock Text="{Binding Currency.PriceChange, StringFormat='Price Change: {0:F2}%'}" Style="{StaticResource CurrencyInfoStyle}"/>
 
-                <!-- Display Markets -->
-            <TextBlock Text="Markets (Price in USD):" FontWeight="Bold" Margin="0,20,0,10" Style="{StaticResource MarketHeaderStyle}"/>
-            <ListBox ItemsSource="{Binding Currency.Markets}" Height="280" ScrollViewer.VerticalScrollBarVisibility="Visible">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel>
-                            <TextBlock Text="{Binding ExchangeId}" Style="{StaticResource MarketExchangeIdStyle}"/>
-                            <TextBlock Text="{Binding Price, StringFormat='Price: {0:C}'}" Style="{StaticResource MarketPriceStyle}"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
 
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="55"/>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <!-- Display Markets -->
+                    <TextBlock Grid.Row="0" Text="Markets (Price in USD):" FontWeight="Bold" Margin="0,20,0,10" Style="{StaticResource MarketHeaderStyle}"/>
+                    <ListBox Grid.Row="1" ItemsSource="{Binding Currency.Markets}" Height="280" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding ExchangeId}" Style="{StaticResource MarketExchangeIdStyle}"/>
+                                    <TextBlock Text="{Binding Price, StringFormat='Price: {0:C}'}" Style="{StaticResource MarketPriceStyle}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+
+                </Grid>
+            </Grid>
         </StackPanel>
     </Grid>
 </UserControl>
