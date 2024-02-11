@@ -17,7 +17,7 @@ namespace CryptoApp.Services
         private readonly HttpClient _httpClient;
 
         /// <summary>
-        /// Constructor of <see cref="CoinCapService"/>
+        /// Initializes a new instance of the <see cref="CoinCapService"/> class
         /// </summary>
         public CoinCapService()
         {

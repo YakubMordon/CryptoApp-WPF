@@ -2,24 +2,43 @@
 using CryptoApp.Models;
 using CryptoApp.Services;
 using GalaSoft.MvvmLight.CommandWpf;
-using Newtonsoft.Json.Linq;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows;
 using System.Windows.Input;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CryptoApp.ViewModels
 {
+    /// <summary>
+    /// Delegate for changing page from <see cref="HeaderViewModel"/> to <see cref="HomeModel"/>
+    /// </summary>
+    /// <param name="value">Currency Model, which will be used to change page</param>
     public delegate void ChangePage(CurrencyModel value);
 
+    /// <summary>
+    /// View model for the Home view.
+    /// </summary>
     class HomeViewModel : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Current <see cref="HomeModel"/>
+        /// </summary>
         private readonly HomeModel _model;
 
+        /// <summary>
+        /// Delegate for changing page
+        /// </summary>
         private ChangePage _changePage;
+
+        /// <summary>
+        /// Search bar text
+        /// </summary>
         private string _searchText;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HomeViewModel"/> class.
+        /// </summary>
+        /// <param name="changePage">Delegate for changing the current page.</param>
+        /// <param name="searchText">The search text.</param>
         public HomeViewModel(ChangePage changePage, string? searchText)
         {
             _model = new HomeModel();
@@ -28,8 +47,20 @@ namespace CryptoApp.ViewModels
             Initialize();
         }
 
+        #region Commands
+
+        /// <summary>
+        /// Command to handle the click event on list items.
+        /// </summary>
         public ICommand ListItemClickCommand => new RelayCommand<object>(ExecuteListItemClick);
 
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets or sets the input text.
+        /// </summary>
         public string InputText
         {
             get => _model.InputText;
@@ -44,12 +75,18 @@ namespace CryptoApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// List of elements
+        /// </summary>
         private ObservableCollection<string> elements;
 
+        /// <summary>
+        /// Gets or sets the list of elements.
+        /// </summary>
         public ObservableCollection<string> Elements
         {
             get => elements;
-            set 
+            set
             {
                 if (elements != value)
                 {
@@ -59,6 +96,9 @@ namespace CryptoApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the list of currency elements.
+        /// </summary>
         public ObservableCollection<CurrencyModel> CurrencyElements
         {
             get => _model.Elements;
@@ -73,6 +113,9 @@ namespace CryptoApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the list of cryptocurrency options.
+        /// </summary>
         public ObservableCollection<string> CryptocurrencyOptions
         {
             get => _model.CryptocurrencyOptions;
@@ -86,6 +129,9 @@ namespace CryptoApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the selected cryptocurrency from.
+        /// </summary>
         public string SelectedCryptocurrencyFrom
         {
             get => _model.SelectedCryptocurrencyFrom;
@@ -95,11 +141,13 @@ namespace CryptoApp.ViewModels
                 {
                     _model.SelectedCryptocurrencyFrom = value;
                     OnPropertyChanged(nameof(SelectedCryptocurrencyFrom));
-                    Convert();
                 }
             }
         }
 
+        /// <summary>
+        /// Gets or sets the selected cryptocurrency to.
+        /// </summary>
         public string SelectedCryptocurrencyTo
         {
             get => _model.SelectedCryptocurrencyTo;
@@ -109,11 +157,13 @@ namespace CryptoApp.ViewModels
                 {
                     _model.SelectedCryptocurrencyTo = value;
                     OnPropertyChanged(nameof(SelectedCryptocurrencyTo));
-                    Convert();
                 }
             }
         }
 
+        /// <summary>
+        /// Gets or sets the cryptocurrency input text.
+        /// </summary>
         public string CryptocurrencyInputText
         {
             get => _model.CryptocurrencyInputText;
@@ -123,11 +173,13 @@ namespace CryptoApp.ViewModels
                 {
                     _model.CryptocurrencyInputText = value;
                     OnPropertyChanged(nameof(CryptocurrencyInputText));
-                    Convert();
                 }
             }
         }
 
+        /// <summary>
+        /// Gets or sets the cryptocurrency output text.
+        /// </summary>
         public string CryptocurrencyOutputText
         {
             get => _model.CryptocurrencyOutputText;
@@ -141,29 +193,27 @@ namespace CryptoApp.ViewModels
             }
         }
 
+        #endregion
+
+        #region ActionHandlers
+
+        /// <summary>
+        /// Searches for <see cref="CurrencyModel"/> based on the input text and search text.
+        /// </summary>
         private async Task Search()
         {
             ICoinCapService coinCapService = new CoinCapService();
 
-            List<CurrencyModel> currencyModels;
+            int.TryParse(InputText, out int number);
 
-            if(int.TryParse(InputText, out int number) && number is < 2001 and > -1)
-            {
-                currencyModels = await coinCapService.GetCurrencyModels(_searchText, number);
-            }
-            else
-            {
-                currencyModels = await coinCapService.GetCurrencyModels(_searchText);
-            }
+            List<CurrencyModel> currencyModels = await coinCapService.GetCurrencyModels(_searchText, number > 0 && number < 2001 ? number : 10);
 
             CurrencyElements = new ObservableCollection<CurrencyModel>(currencyModels);
         }
 
-        private void Convert()
-        {
-            // Implement convert functionality here
-        }
-
+        /// <summary>
+        /// Initializes the <see cref="HomeViewModel"/>.
+        /// </summary>
         private void Initialize()
         {
             ICoinCapService coinCapService = new CoinCapService();
@@ -189,6 +239,10 @@ namespace CryptoApp.ViewModels
             });
         }
 
+        /// <summary>
+        /// Executes when a list item is clicked.
+        /// </summary>
+        /// <param name="parameter">The parameter associated with the clicked item.</param>
         private void ExecuteListItemClick(object parameter)
         {
             if (parameter is string parameterString)
@@ -201,6 +255,9 @@ namespace CryptoApp.ViewModels
             }
         }
 
+        /// <summary>
+        /// Updates the list of elements.
+        /// </summary>
         private void UpdateElementList()
         {
             var stringList = CurrencyElements.Select(item =>
@@ -210,10 +267,21 @@ namespace CryptoApp.ViewModels
             Elements = new ObservableCollection<string>(stringList);
         }
 
+        #endregion
+
+        #region PropertyChanged
+
+        /// <summary>
+        /// Event for handling property change
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+
+        /// <summary>
+        /// Method for handling property change
+        /// </summary>
+        /// <param name="propertyName">Name of property, which was changed</param>
+        protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        #endregion
     }
 }
